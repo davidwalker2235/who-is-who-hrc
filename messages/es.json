@@ -1,0 +1,93 @@
+{
+  "common": {
+    "yes": "Si",
+    "no": "No",
+    "close": "Cerrar",
+    "download": "Descargar",
+    "restart": "Reiniciar",
+    "questionOf": "Pregunta {current} de {total}",
+    "english": "Ingles",
+    "spanish": "Espanol"
+  },
+  "header": {
+    "logoAlt": "Logo de ERNI",
+    "languageSelectorAria": "Seleccionar idioma"
+  },
+  "home": {
+    "bannerTitleLine1": "ERNI",
+    "bannerTitleLine2": "Ingenieria de software suiza",
+    "guessWhoTitle": "Juega a \"Quien es quien\" y encuentra tu caricatura!",
+    "guessWhoParagraph1": "Si visitaste nuestro stand y te hiciste un retrato con nuestro robot, ahora es el momento de encontrar a tu alter ego en version caricatura.<br />Juega a nuestro \"Quien es Quien\", identifica tu caricatura entre la multitud y descarga a tu gemelo digital.",
+    "guessWhoParagraph2": "Aviso: hay muchas probabilidades de que te rias al ver tu propia cara en version pixel-perfect.",
+    "playNow": "Juega ahora",
+    "playIn3d": "Juega en 3D",
+    "sectionImageAlt": "Colaboracion de equipo - Mujer y hombre trabajando juntos en un portatil",
+    "videoGamesSectionTitle": "Juega a nuestros videojuegos",
+    "videoGamesEerniTitle": "ERNI Bots: CTF de hacking de IA",
+    "videoGamesEerniDescription": "Pon a prueba tus skills con prompt injection: ataca, defiende y escala en el ranking.",
+    "videoGamesEerniCta": "Jugar al CTF",
+    "videoGamesEerniImageAlt": "Arte del videojuego ERNI Bots — CTF de hacking de IA",
+    "videoGamesFireTitle": "Fire or Fired: Caos en la oficina",
+    "videoGamesFireDescription": "Decisiones, presión y caos laboral. Encuentra el equilibrio o estás despedido.",
+    "videoGamesFireCta": "Jugar ahora",
+    "videoGamesFireImageAlt": "Arte del videojuego Fire or Fired — caos en la oficina"
+  },
+  "jobs": {
+    "title": "Desarrolla tu potencial<br />y conviertete en un ERNIan.",
+    "description": "Buscamos personas como tu, con ganas de crecer y que quieran formar parte de proyectos retadores para llegar aun mas lejos.",
+    "cta": "Ver oportunidades disponibles"
+  },
+  "whoIsWho": {
+    "title": "Quien es quien",
+    "title3d": "Quien es quien 3D",
+    "findCaricature": "Encuentra tu caricatura",
+    "possibleTwins": "Estos son tus posibles gemelos digitales!",
+    "resetFiltersAria": "Reiniciar filtros"
+  },
+  "questions": {
+    "q1": "Alguien en tu caricatura tiene gafas?",
+    "q2": "Alguien en tu caricatura tiene barba?",
+    "q3": "Alguien en tu caricatura tiene el pelo largo?",
+    "q4": "Alguien en tu caricatura tiene pendientes?",
+    "q5": "Sale algun hombre en la caricatura?",
+    "q6": "Salis mas de una persona en la caricatura?",
+    "q7": "Aparece una mascota en la caricatura?"
+  },
+  "grid": {
+    "noneFound": "No se encontraron caricaturas con esas caracteristicas",
+    "filtering": "Filtrando caricaturas..."
+  },
+  "footer": {
+    "rights": "© 2026 ERNI - Todos los derechos reservados.",
+    "followUs": "Siguenos en"
+  },
+  "label": {
+    "featuresTitle": "Caracteristicas",
+    "title": "Etiquetado de caricaturas",
+    "shortcuts": "Teclas: 1-7 alternan features, A anterior, D siguiente, S guardar.",
+    "file": "Archivo: {file} ({current}/{total})",
+    "noFiles": "No hay archivos para etiquetar.",
+    "goToLabel": "Ir a caricatura",
+    "goToPlaceholder": "Ej: 523",
+    "goTo": "Ir",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "saving": "Guardando...",
+    "save": "Guardar",
+    "invalidTarget": "Introduce un numero de caricatura valido.",
+    "missingTarget": "No existe {file} en public/caricatures.",
+    "positioned": "Posicionado en {file}.",
+    "loadError": "No se pudieron cargar las etiquetas.",
+    "saveError": "No se pudieron guardar las etiquetas.",
+    "unknownError": "Error desconocido",
+    "unknownSaveError": "Error desconocido al guardar",
+    "savedOk": "Guardado correcto ({updated} imagenes).",
+    "featureGlasses": "Gafas (GLASSES)",
+    "featureBeard": "Barba (BEARD)",
+    "featureLongHair": "Pelo largo (LONG_AIR)",
+    "featureEarrings": "Pendientes (EARRINGS)",
+    "featureMan": "Hombre (MAN)",
+    "featurePet": "Mascota (PET)",
+    "featureGroup": "Grupo, mas de una persona (GROUP)"
+  }
+}

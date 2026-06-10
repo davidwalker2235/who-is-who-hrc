@@ -1,0 +1,14 @@
+
+> findyourface@0.1.0 dev
+> next dev --webpack
+
+▲ Next.js 16.1.6 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://10.143.90.27:3000
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 2.2s
+○ Compiling /[locale] ...
+ GET /en 200 in 8.6s (compile: 8.0s, proxy.ts: 158ms, generate-params: 733ms, render: 410ms)
+[?25h

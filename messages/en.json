@@ -1,0 +1,93 @@
+{
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "download": "Download",
+    "restart": "Restart",
+    "questionOf": "Question {current} of {total}",
+    "english": "English",
+    "spanish": "Spanish"
+  },
+  "header": {
+    "logoAlt": "ERNI logo",
+    "languageSelectorAria": "Select language"
+  },
+  "home": {
+    "bannerTitleLine1": "ERNI",
+    "bannerTitleLine2": "Swiss software engineering",
+    "guessWhoTitle": "Play \"Guess who\" and find your caricature!",
+    "guessWhoParagraph1": "If you visited our stand and had your portrait taken by our robot, now's the time to find your cartoon alter ego.<br />Play our \"Guess Who,\" spot your caricature among the crowd, and download your digital twin.",
+    "guessWhoParagraph2": "Note: there's a high chance you'll laugh when you see your own face in pixel-perfect form.",
+    "playNow": "Play now",
+    "playIn3d": "Play in 3D",
+    "sectionImageAlt": "Team collaboration - Woman and man working together on laptop",
+    "videoGamesSectionTitle": "Play our video games",
+    "videoGamesEerniTitle": "ERNI Bots: AI Hacking CTF",
+    "videoGamesEerniDescription": "Test your skills with prompt injection: attack, defend, and climb the ranking.",
+    "videoGamesEerniCta": "Play the CTF",
+    "videoGamesEerniImageAlt": "ERNI Bots — AI hacking capture-the-flag game artwork",
+    "videoGamesFireTitle": "Fire or Fired: Office Chaos",
+    "videoGamesFireDescription": "Decisions, pressure, and workplace chaos. Find the balance or you're fired.",
+    "videoGamesFireCta": "Play now",
+    "videoGamesFireImageAlt": "Fire or Fired — office chaos game artwork"
+  },
+  "jobs": {
+    "title": "Unlock your potential<br />and become an ERNIan.",
+    "description": "We are looking for people like you, ready to grow and eager to take on challenging projects to go even further.",
+    "cta": "View job opportunities"
+  },
+  "whoIsWho": {
+    "title": "Guess who",
+    "title3d": "Guess who 3D",
+    "findCaricature": "Find your caricature",
+    "possibleTwins": "These are your possible digital twins!",
+    "resetFiltersAria": "Reset filters"
+  },
+  "questions": {
+    "q1": "Does anyone in your caricature wear glasses?",
+    "q2": "Does anyone in your caricature have a beard?",
+    "q3": "Does anyone in your caricature have long hair?",
+    "q4": "Does anyone in your caricature wear earrings?",
+    "q5": "Is there a man in the caricature?",
+    "q6": "Is there more than one person in the caricature?",
+    "q7": "Is there a pet in the caricature?"
+  },
+  "grid": {
+    "noneFound": "No caricatures were found with those features",
+    "filtering": "Filtering caricatures..."
+  },
+  "footer": {
+    "rights": "© 2026 ERNI - All rights reserved.",
+    "followUs": "Follow us on"
+  },
+  "label": {
+    "featuresTitle": "Features",
+    "title": "Caricature labeling",
+    "shortcuts": "Keys: 1-7 toggle features, A previous, D next, S save.",
+    "file": "File: {file} ({current}/{total})",
+    "noFiles": "There are no files to label.",
+    "goToLabel": "Go to caricature",
+    "goToPlaceholder": "Ex: 523",
+    "goTo": "Go",
+    "previous": "Previous",
+    "next": "Next",
+    "saving": "Saving...",
+    "save": "Save",
+    "invalidTarget": "Enter a valid caricature number.",
+    "missingTarget": "{file} does not exist in public/caricatures.",
+    "positioned": "Positioned at {file}.",
+    "loadError": "Could not load labels.",
+    "saveError": "Could not save labels.",
+    "unknownError": "Unknown error",
+    "unknownSaveError": "Unknown save error",
+    "savedOk": "Saved successfully ({updated} images).",
+    "featureGlasses": "Glasses (GLASSES)",
+    "featureBeard": "Beard (BEARD)",
+    "featureLongHair": "Long hair (LONG_AIR)",
+    "featureEarrings": "Earrings (EARRINGS)",
+    "featureMan": "Man (MAN)",
+    "featurePet": "Pet (PET)",
+    "featureGroup": "Group, more than one person (GROUP)"
+  }
+}
