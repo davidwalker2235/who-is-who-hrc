@@ -10,7 +10,7 @@ export default function VideoBanner({titleLine1, titleLine2}: VideoBannerProps) 
     <div className="w-full h-[75vh] relative overflow-hidden">
       <video
         className="w-full h-full absolute top-0 left-0 object-cover"
-        src="/codemotion_video.mp4"
+        src="/ERNI_video.mp4"
         autoPlay
         muted
         loop
