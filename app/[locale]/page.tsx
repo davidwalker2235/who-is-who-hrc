@@ -21,7 +21,6 @@ export default function Home() {
         imageAlt={t("sectionImageAlt")}
         imagePosition="right"
       />
-      <VideoGamesSection />
       <FooterBanner />
     </div>
   );
