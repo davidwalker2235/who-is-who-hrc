@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Text } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -8,6 +8,10 @@ import { caricaturesData } from '../data/imagesData';
 import { CharacterCard } from './index';
 import { filterImagesBySequence } from '../utils/filterUtils';
 import {useTranslations} from 'next-intl';
+
+type LabelsMap = Record<string, number[]>;
+
+type CaricatureItem = { file: string; features: number[] };
 
 interface WhoIsWhoBoardProps {
   answers: boolean[];
@@ -19,9 +23,47 @@ export default function WhoIsWhoBoard({ answers, onCardClick, maxCards }: WhoIsW
   const tWho = useTranslations('whoIsWho');
   const groupRef = useRef<THREE.Group>(null);
   const { camera, gl } = useThree();
+  const [runtimeCards, setRuntimeCards] = useState<CaricatureItem[]>(caricaturesData);
+
+  useEffect(() => {
+    const fallbackByFile = new Map(
+      caricaturesData.map((caricature) => [caricature.file, caricature.features])
+    );
+
+    let isMounted = true;
+
+    const loadCards = async () => {
+      try {
+        const response = await fetch('/api/labels');
+        if (!response.ok) throw new Error('labels fetch failed');
+
+        const data = await response.json() as { files?: string[]; labels?: LabelsMap };
+        const files = data.files ?? [];
+        const labels = data.labels ?? {};
+
+        const apiCards: CaricatureItem[] = files.map((file) => ({
+          file,
+          features: labels[file] ?? fallbackByFile.get(file) ?? [0, 0, 0, 0, 0, 0, 0]
+        }));
+
+        if (!isMounted) return;
+        setRuntimeCards(apiCards);
+      } catch {
+        if (!isMounted) return;
+        setRuntimeCards(caricaturesData);
+      }
+    };
+
+    void loadCards();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const visibleCards = useMemo(
-    () => (typeof maxCards === 'number' ? caricaturesData.slice(0, maxCards) : caricaturesData),
-    [maxCards]
+    () => (typeof maxCards === 'number' ? runtimeCards.slice(0, maxCards) : runtimeCards),
+    [maxCards, runtimeCards]
   );
 
   // Manejador de clics global con raycasting
@@ -81,6 +123,7 @@ export default function WhoIsWhoBoard({ answers, onCardClick, maxCards }: WhoIsW
 
   // Crear una matriz que ocupe todo el tablero de delante hacia atrás
   const boardLayout = useMemo(() => {
+    debugger;
     const cardsPerRow = 8;
     const totalCards = visibleCards.length;
     const totalRows = Math.ceil(totalCards / cardsPerRow);

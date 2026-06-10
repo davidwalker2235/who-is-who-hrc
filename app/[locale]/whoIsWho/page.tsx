@@ -57,7 +57,7 @@ export default function WhoIsWho() {
   };
 
   const currentQuestion = questions[currentQuestionIndex];
-
+debugger;
   return (
     <>
       <Container maxWidth="xl" sx={{ py: 4, pb: '90px' }}>

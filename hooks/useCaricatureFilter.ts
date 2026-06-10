@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { caricaturesData } from '@/data/imagesData';
 import { CaricatureImage, filterImagesBySequence, questionFeatures } from '@/utils/filterUtils';
 
+type LabelsMap = Record<string, number[]>;
+
 export const useCaricatureFilter = () => {
   const [images, setImages] = useState<CaricatureImage[]>([]);
   const [filteredImages, setFilteredImages] = useState<CaricatureImage[]>([]);
@@ -11,15 +13,50 @@ export const useCaricatureFilter = () => {
   const [isFiltering, setIsFiltering] = useState(false);
 
   useEffect(() => {
-    const allImageData: CaricatureImage[] = caricaturesData.map(caricature => ({
-      name: caricature.file.replace('.png', ''),
+    const fallbackByFile = new Map(
+      caricaturesData.map((caricature) => [caricature.file, caricature.features])
+    );
+
+    const fallbackImages: CaricatureImage[] = caricaturesData.map((caricature) => ({
+      name: caricature.file.replace('.jpg', ''),
       src: `/caricatures/${caricature.file}`,
       size: 'Mediana',
       features: caricature.features
     }));
 
-    setImages(allImageData);
-    setFilteredImages(allImageData);
+    let isMounted = true;
+
+    const loadImages = async () => {
+      try {
+        const response = await fetch('/api/labels');
+        if (!response.ok) throw new Error('labels fetch failed');
+
+        const data = await response.json() as { files?: string[]; labels?: LabelsMap };
+        const files = data.files ?? [];
+        const labels = data.labels ?? {};
+
+        const apiImages: CaricatureImage[] = files.map((file) => ({
+          name: file.replace('.jpg', ''),
+          src: `/caricatures/${file}`,
+          size: 'Mediana',
+          features: labels[file] ?? fallbackByFile.get(file) ?? [0, 0, 0, 0, 0, 0, 0]
+        }));
+
+        if (!isMounted) return;
+        setImages(apiImages);
+        setFilteredImages(apiImages);
+      } catch {
+        if (!isMounted) return;
+        setImages(fallbackImages);
+        setFilteredImages(fallbackImages);
+      }
+    };
+
+    void loadImages();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
