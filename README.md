@@ -21,6 +21,8 @@ NEXT_PUBLIC_APP_ENV=local
 
 Las mismas variables deben existir en Vercel en **Project Settings > Environment Variables** para los entornos que uses: Production, Preview y Development.
 
+Despues de crear o cambiar variables `NEXT_PUBLIC_*` en Vercel, haz un **Redeploy**. Next.js las incrusta en el JavaScript cliente durante el build; una deployment ya generada no empieza a usarlas solo por cambiar la configuracion del proyecto.
+
 El prefijo `NEXT_PUBLIC_` es necesario porque Firebase Analytics web corre en el navegador. Vercel avisa de que estas variables son publicas porque se incluyen en el bundle cliente; eso es esperado para la configuracion web de Firebase. No pongas secretos privados en variables `NEXT_PUBLIC_*`. Protege el proyecto con reglas de Firebase, dominios autorizados y restricciones de API key por HTTP referrer en Google Cloud/Firebase.
 
 No hace falta crear GitHub Secrets para Analytics si Vercel compila y despliega directamente desde el repositorio usando sus Environment Variables. Solo crea secrets en GitHub si tienes un workflow de GitHub Actions que ejecute `next build`, tests o deploys fuera de Vercel; en ese caso usa los mismos nombres `NEXT_PUBLIC_FIREBASE_*`.
@@ -58,3 +60,21 @@ Para ver parametros personalizados como `button_id`, `surface`, `mode`, `questio
 2. Abre la app en local con `.env.local` configurado.
 3. Usa Firebase DebugView o la pestaña Network del navegador para comprobar eventos como `page_view`, `button_click`, `question_answer`, `download_click`, `scroll_depth` y `page_engagement`.
 4. En Vercel, configura las variables de entorno, despliega un Preview y confirma que DebugView recibe eventos desde el dominio de Vercel.
+
+Si en Vercel no ves peticiones `collect`, abre la URL desplegada con `?analyticsDebug=1`, por ejemplo:
+
+```text
+https://tu-dominio.vercel.app/en?analyticsDebug=1
+```
+
+En la consola del navegador veras mensajes con prefijo `[Firebase Analytics]`. Si aparece `Missing NEXT_PUBLIC Firebase config keys`, falta alguna variable en el entorno exacto que estas probando o falta redeploy. Tambien puedes activar el modo debug persistente desde la consola:
+
+```js
+localStorage.setItem('analytics_debug', 'true')
+```
+
+Para desactivarlo:
+
+```js
+localStorage.removeItem('analytics_debug')
+```

@@ -1,4 +1,4 @@
-import {getFirebaseAnalytics} from './firebase';
+import {debugAnalytics, getFirebaseAnalytics} from './firebase';
 
 export type AnalyticsParamValue = string | number | boolean | null | undefined;
 export type AnalyticsParams = Record<string, AnalyticsParamValue>;
@@ -11,14 +11,26 @@ const stringLimits: Record<string, number> = {
 };
 
 export async function trackEvent(eventName: string, params: AnalyticsParams = {}) {
-  const analytics = await getFirebaseAnalytics();
-  if (!analytics) return;
-
-  const {logEvent} = await import('firebase/analytics');
-  logEvent(analytics, normalizeEventName(eventName), sanitizeParams({
+  const normalizedEventName = normalizeEventName(eventName);
+  const eventParams = sanitizeParams({
     ...getPageContext(),
     ...params
-  }));
+  });
+  const analytics = await getFirebaseAnalytics();
+  if (!analytics) {
+    debugAnalytics('Event skipped because Analytics is not available.', {
+      eventName: normalizedEventName,
+      params: eventParams
+    });
+    return;
+  }
+
+  const {logEvent} = await import('firebase/analytics');
+  debugAnalytics('Sending event.', {
+    eventName: normalizedEventName,
+    params: eventParams
+  });
+  logEvent(analytics, normalizedEventName, eventParams);
 }
 
 export function trackButtonClick(buttonId: string, params: AnalyticsParams = {}) {
@@ -91,7 +103,10 @@ export function trackQuestionAnswer(params: AnalyticsParams = {}) {
 
 export async function setAnalyticsUserId(userId: string | null) {
   const analytics = await getFirebaseAnalytics();
-  if (!analytics) return;
+  if (!analytics) {
+    debugAnalytics('User ID skipped because Analytics is not available.');
+    return;
+  }
 
   const {setUserId} = await import('firebase/analytics');
   setUserId(analytics, userId);
@@ -99,7 +114,12 @@ export async function setAnalyticsUserId(userId: string | null) {
 
 export async function setAnalyticsUserProperties(properties: AnalyticsParams) {
   const analytics = await getFirebaseAnalytics();
-  if (!analytics) return;
+  if (!analytics) {
+    debugAnalytics('User properties skipped because Analytics is not available.', {
+      properties: sanitizeParams(properties)
+    });
+    return;
+  }
 
   const {setUserProperties} = await import('firebase/analytics');
   setUserProperties(analytics, sanitizeParams(properties));

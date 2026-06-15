@@ -24,7 +24,17 @@ const requiredFirebaseConfigKeys = [
 let analyticsPromise: Promise<Analytics | null> | null = null;
 
 function hasFirebaseConfig() {
-  return requiredFirebaseConfigKeys.every((key) => Boolean(firebaseConfig[key]));
+  return getMissingFirebaseConfigKeys().length === 0;
+}
+
+export function getMissingFirebaseConfigKeys() {
+  return requiredFirebaseConfigKeys.filter((key) => !firebaseConfig[key]);
+}
+
+export function debugAnalytics(message: string, data?: Record<string, unknown>) {
+  if (!isAnalyticsDebugEnabled()) return;
+
+  console.info(`[Firebase Analytics] ${message}`, data ?? '');
 }
 
 export function getFirebaseApp(): FirebaseApp | null {
@@ -43,10 +53,36 @@ export function getFirebaseAnalytics(): Promise<Analytics | null> {
 
 async function initializeFirebaseAnalytics() {
   const app = getFirebaseApp();
-  if (!app) return null;
+  if (!app) {
+    debugAnalytics('Analytics not initialized. Missing NEXT_PUBLIC Firebase config keys.', {
+      missingKeys: getMissingFirebaseConfigKeys()
+    });
+    return null;
+  }
 
   const {getAnalytics, isSupported} = await import('firebase/analytics');
   const supported = await isSupported().catch(() => false);
 
-  return supported ? getAnalytics(app) : null;
+  if (!supported) {
+    debugAnalytics('Analytics not initialized. Browser environment is not supported by Firebase Analytics.');
+    return null;
+  }
+
+  debugAnalytics('Analytics initialized.', {
+    projectIdConfigured: Boolean(firebaseConfig.projectId),
+    measurementIdConfigured: Boolean(firebaseConfig.measurementId)
+  });
+
+  return getAnalytics(app);
+}
+
+function isAnalyticsDebugEnabled() {
+  if (typeof window === 'undefined') return false;
+
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return params.has('analyticsDebug') || window.localStorage.getItem('analytics_debug') === 'true';
+  } catch {
+    return false;
+  }
 }
