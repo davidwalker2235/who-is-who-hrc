@@ -5,6 +5,7 @@ import {Box, Button, Menu, MenuItem} from '@mui/material';
 import {KeyboardArrowDown} from '@mui/icons-material';
 import {useLocale, useTranslations} from 'next-intl';
 import {usePathname, useRouter} from '@/i18n/navigation';
+import {trackButtonClick, trackEvent} from '@/lib/analytics';
 
 const languages = [
   {locale: 'en', flagSrc: '/englishFlag.png', labelKey: 'english'},
@@ -23,16 +24,38 @@ export default function LanguageSelector() {
   const menuOpen = Boolean(anchorEl);
 
   const handleOpen = (event: MouseEvent<HTMLButtonElement>) => {
+    void trackButtonClick('button.header.language.open', {
+      surface: 'header',
+      current_locale: locale,
+      page_path: pathname
+    });
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
+    void trackEvent('language_menu_close', {
+      surface: 'header',
+      current_locale: locale,
+      page_path: pathname
+    });
     setAnchorEl(null);
   };
 
   const handleChangeLocale = (nextLocale: 'en' | 'es') => {
+    void trackButtonClick(`menu.header.language.${nextLocale}`, {
+      surface: 'header',
+      current_locale: locale,
+      target_locale: nextLocale,
+      page_path: pathname
+    });
+    void trackEvent('language_change', {
+      surface: 'header',
+      previous_locale: locale,
+      target_locale: nextLocale,
+      page_path: pathname
+    });
     router.replace(pathname, {locale: nextLocale});
-    handleClose();
+    setAnchorEl(null);
   };
 
   return (

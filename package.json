@@ -20,7 +20,6 @@
     "@react-three/fiber": "^9.2.0",
     "@swc/helpers": "^0.5.19",
     "@types/three": "^0.178.1",
-    "@vercel/analytics": "^1.5.0",
     "firebase": "^12.14.0",
     "next": "^16.1.6",
     "next-intl": "^4.8.3",

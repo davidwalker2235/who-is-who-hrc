@@ -8,6 +8,15 @@ import {
 } from '@mui/icons-material';
 import InstagramIcon from './InstagramIcon';
 import {useTranslations} from 'next-intl';
+import {trackOutboundLink} from '@/lib/analytics';
+
+function openSocialLink(network: string, href: string) {
+  void trackOutboundLink(`button.footer.social.${network}`, href, {
+    surface: 'footer',
+    network
+  });
+  window.open(href, '_blank', 'noopener,noreferrer');
+}
 
 export default function Footer() {
   const t = useTranslations('footer');
@@ -88,7 +97,7 @@ export default function Footer() {
                     backgroundColor: 'rgba(0, 119, 181, 0.1)'
                   }
                 }}
-                onClick={() => window.open('https://www.linkedin.com/company/erni/', '_blank', 'noopener,noreferrer')}
+                onClick={() => openSocialLink('linkedin', 'https://www.linkedin.com/company/erni/')}
                 aria-label="LinkedIn"
               >
                 <svg
@@ -109,7 +118,7 @@ export default function Footer() {
                     backgroundColor: 'rgba(228, 64, 95, 0.1)'
                   }
                 }}
-                onClick={() => window.open('https://www.instagram.com/ernigroup/', '_blank', 'noopener,noreferrer')}
+                onClick={() => openSocialLink('instagram', 'https://www.instagram.com/ernigroup/')}
               >
                 <InstagramIcon color="#E4405F" />
               </IconButton>
@@ -121,7 +130,7 @@ export default function Footer() {
                     backgroundColor: 'rgba(255, 0, 0, 0.1)'
                   }
                 }}
-                onClick={() => window.open('https://www.youtube.com/user/ERNIConsulting', '_blank', 'noopener,noreferrer')}
+                onClick={() => openSocialLink('youtube', 'https://www.youtube.com/user/ERNIConsulting')}
               >
                 <YouTube fontSize="small" />
               </IconButton>
@@ -133,7 +142,7 @@ export default function Footer() {
                     backgroundColor: 'rgba(24, 119, 242, 0.1)'
                   }
                 }}
-                onClick={() => window.open('https://www.facebook.com/ernigroup/', '_blank', 'noopener,noreferrer')}
+                onClick={() => openSocialLink('facebook', 'https://www.facebook.com/ernigroup/')}
               >
                 <Facebook fontSize="small" />
               </IconButton>
@@ -145,7 +154,7 @@ export default function Footer() {
                     backgroundColor: 'rgba(0, 0, 0, 0.1)'
                   }
                 }}
-                onClick={() => window.open('https://x.com/ERNI', '_blank', 'noopener,noreferrer')}
+                onClick={() => openSocialLink('x', 'https://x.com/ERNI')}
               >
                 <X fontSize="small" />
               </IconButton>

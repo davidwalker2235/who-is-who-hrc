@@ -5,6 +5,9 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import LanguageSelector from './LanguageSelector';
 import {useTranslations} from 'next-intl';
+import {trackOutboundLink} from '@/lib/analytics';
+
+const erniLogoHref = 'https://www.betterask.erni/';
 
 export default function AppBarComponent() {
   const t = useTranslations('header');
@@ -27,7 +30,15 @@ export default function AppBarComponent() {
             height: { xs: '1.5rem', sm: '2.2386rem' },
             width: { xs: '8rem', sm: '11.5625rem' }
           }}>
-            <a href="https://www.betterask.erni/" target="_blank" rel="noopener noreferrer">
+            <a
+              href={erniLogoHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => void trackOutboundLink('button.header.logo', erniLogoHref, {
+                surface: 'header',
+                button_text: 'ERNI logo'
+              })}
+            >
               <img
                 alt={t('logoAlt')}
                 src="/erniLogo.png"

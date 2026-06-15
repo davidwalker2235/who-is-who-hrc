@@ -1,3 +1,5 @@
+'use client';
+
 import { 
   Modal, 
   Paper, 
@@ -10,6 +12,7 @@ import {
   Download 
 } from '@mui/icons-material';
 import {useTranslations} from 'next-intl';
+import {trackButtonClick, trackDownload, trackModalClose} from '@/lib/analytics';
 
 interface ImageModalProps {
   open: boolean;
@@ -19,20 +22,50 @@ interface ImageModalProps {
   } | null;
   onClose: () => void;
   onDownload: (imageSrc: string, imageName: string) => void;
+  analyticsMode?: string;
 }
 
 export default function ImageModal({
   open,
   selectedImage,
   onClose,
-  onDownload
+  onDownload,
+  analyticsMode = 'unknown'
 }: ImageModalProps) {
   const tCommon = useTranslations('common');
+  const modalButtonPrefix = analyticsMode === '2d' || analyticsMode === '3d'
+    ? `button.${analyticsMode}.image-modal`
+    : 'button.image-modal';
+
+  const handleClose = () => {
+    void trackButtonClick(`${modalButtonPrefix}.close`, {
+      surface: 'image_modal',
+      mode: analyticsMode,
+      image_name: selectedImage?.name
+    });
+    void trackModalClose('image_modal', {
+      surface: 'image_modal',
+      mode: analyticsMode,
+      image_name: selectedImage?.name
+    });
+    onClose();
+  };
+
+  const handleDownload = () => {
+    if (!selectedImage) return;
+
+    void trackDownload(`${modalButtonPrefix}.download`, selectedImage.src, selectedImage.name, {
+      surface: 'image_modal',
+      mode: analyticsMode,
+      image_name: selectedImage.name
+    });
+    onDownload(selectedImage.src, selectedImage.name);
+  };
 
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       sx={{
         display: 'flex',
         alignItems: 'center',
@@ -72,7 +105,7 @@ export default function ImageModal({
           </Typography>
           
           <IconButton
-            onClick={onClose}
+            onClick={handleClose}
             aria-label={tCommon('close')}
             sx={{
               color: 'white',
@@ -106,7 +139,7 @@ export default function ImageModal({
           bgcolor: 'background.paper'
         }}>
           <IconButton
-            onClick={() => selectedImage && onDownload(selectedImage.src, selectedImage.name)}
+            onClick={handleDownload}
             size="large"
             aria-label={tCommon('download')}
             sx={{

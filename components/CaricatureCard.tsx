@@ -10,6 +10,7 @@ import {
   ZoomIn, 
   Download 
 } from '@mui/icons-material';
+import {trackButtonClick, trackDownload, trackModalOpen} from '@/lib/analytics';
 
 interface CaricatureImage {
   name: string;
@@ -34,6 +35,33 @@ export default function CaricatureCard({
   onDownload
 }: CaricatureCardProps) {
   const imageNumber = image.name.replace(/\.[^/.]+$/, '');
+
+  const openModal = (source: string) => {
+    void trackButtonClick(`card.2d.caricature.open-${source}`, {
+      surface: 'caricature_grid',
+      mode: '2d',
+      source,
+      image_name: image.name,
+      grid_index: index
+    });
+    void trackModalOpen('image_modal', {
+      surface: 'caricature_grid',
+      mode: '2d',
+      source,
+      image_name: image.name
+    });
+    onOpenModal(image);
+  };
+
+  const downloadImage = () => {
+    void trackDownload('button.2d.caricature.download', image.src, image.name, {
+      surface: 'caricature_grid',
+      mode: '2d',
+      image_name: image.name,
+      grid_index: index
+    });
+    onDownload(image.src, image.name);
+  };
 
   return (
     <Card 
@@ -60,7 +88,7 @@ export default function CaricatureCard({
             objectFit: 'cover',
             cursor: 'pointer'
           }}
-          onClick={() => onOpenModal(image)}
+          onClick={() => openModal('image')}
         />
         <Typography
           sx={{
@@ -83,7 +111,7 @@ export default function CaricatureCard({
       <Box sx={{ p: 2, textAlign: 'center' }}>
         <CardActions sx={{ justifyContent: 'center', p: 0 }}>
           <IconButton 
-            onClick={() => onOpenModal(image)}
+            onClick={() => openModal('icon')}
             size="small"
             sx={{
               color: '#033778'
@@ -92,7 +120,7 @@ export default function CaricatureCard({
             <ZoomIn />
           </IconButton>
           <IconButton 
-            onClick={() => onDownload(image.src, image.name)}
+            onClick={downloadImage}
             size="small"
             sx={{
               color: '#033778'

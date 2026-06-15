@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { caricaturesData } from '@/data/imagesData';
 import { CaricatureImage, filterImagesBySequence, questionFeatures } from '@/utils/filterUtils';
+import {trackEvent, trackQuestionAnswer} from '@/lib/analytics';
 
 type LabelsMap = Record<string, number[]>;
 
@@ -62,12 +63,18 @@ export const useCaricatureFilter = () => {
   useEffect(() => {
     if (images.length > 0) {
       setTimeout(() => {
+        void trackEvent('question_sequence_start', {
+          mode: '2d',
+          source: 'auto_open',
+          total_count: images.length
+        });
         setQuestionModalOpen(true);
       }, 1000);
     }
   }, [images]);
 
   const handleAnswer = (answer: boolean) => {
+    const questionIndex = currentQuestionIndex;
     const newAnswers = [...answers, answer];
     setAnswers(newAnswers);
     
@@ -77,10 +84,23 @@ export const useCaricatureFilter = () => {
       const filtered = filterImagesBySequence(images, newAnswers);
       setFilteredImages(filtered);
       setIsFiltering(false);
+      void trackQuestionAnswer({
+        mode: '2d',
+        question_index: questionIndex + 1,
+        feature_index: questionFeatures[questionIndex],
+        answer: answer ? 'yes' : 'no',
+        answers_count: newAnswers.length,
+        remaining_count: filtered.length
+      });
       
       if (currentQuestionIndex < questionFeatures.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       } else {
+        void trackEvent('question_sequence_complete', {
+          mode: '2d',
+          answers_count: newAnswers.length,
+          remaining_count: filtered.length
+        });
         setQuestionModalOpen(false);
       }
     }, 300);
@@ -88,6 +108,12 @@ export const useCaricatureFilter = () => {
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
+      void trackEvent('question_previous', {
+        mode: '2d',
+        from_question_index: currentQuestionIndex + 1,
+        target_question_index: currentQuestionIndex,
+        answers_count: answers.length
+      });
       const newAnswers = answers.slice(0, -1);
       setAnswers(newAnswers);
       setCurrentQuestionIndex(currentQuestionIndex - 1);
@@ -102,6 +128,11 @@ export const useCaricatureFilter = () => {
   };
 
   const handleCancelQuestions = () => {
+    void trackEvent('question_cancel', {
+      mode: '2d',
+      question_index: currentQuestionIndex + 1,
+      answers_count: answers.length
+    });
     setQuestionModalOpen(false);
     setCurrentQuestionIndex(0);
     setAnswers([]);
@@ -109,6 +140,12 @@ export const useCaricatureFilter = () => {
   };
 
   const handleResetFilters = () => {
+    void trackEvent('filter_reset', {
+      mode: '2d',
+      answers_count: answers.length,
+      previous_count: filteredImages.length,
+      total_count: images.length
+    });
     setQuestionModalOpen(false);
     setCurrentQuestionIndex(0);
     setAnswers([]);
@@ -116,6 +153,11 @@ export const useCaricatureFilter = () => {
   };
 
   const handleRestartSequence = () => {
+    void trackEvent('question_sequence_start', {
+      mode: '2d',
+      source: 'restart_button',
+      total_count: images.length
+    });
     setQuestionModalOpen(false);
     setCurrentQuestionIndex(0);
     setAnswers([]);

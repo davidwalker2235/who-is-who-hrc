@@ -3,6 +3,9 @@
 import { HtmlRenderer } from '@/utils/htmlRenderer';
 import React from 'react';
 import {useTranslations} from 'next-intl';
+import {trackOutboundLink} from '@/lib/analytics';
+
+const jobsHref = 'https://www.betterask.erni/es-en/job-opportunities/';
 
 export default function FooterBanner() {
   const tJobs = useTranslations('jobs');
@@ -38,9 +41,12 @@ export default function FooterBanner() {
           </div>
           <div className="flex lg:flex lg:col-span-3 items-end justify-end">
             <a
-              href="https://www.betterask.erni/es-en/job-opportunities/"
+              href={jobsHref}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => void trackOutboundLink('button.jobs.cta', jobsHref, {
+                surface: 'jobs_banner'
+              })}
               className="inline-flex items-center justify-center gap-2 bg-[#033778] text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-[#022a5e] transition-colors duration-300"
               style={{ fontFamily: 'var(--font-source-sans-pro), sans-serif' }}
             >

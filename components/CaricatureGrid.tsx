@@ -3,6 +3,7 @@ import { Box, Typography, Fade, Slide, CircularProgress } from '@mui/material';
 import CaricatureCard from './CaricatureCard';
 import { CaricatureImage } from '@/utils/filterUtils';
 import {useTranslations} from 'next-intl';
+import {trackEvent} from '@/lib/analytics';
 
 interface CaricatureGridProps {
   images: CaricatureImage[];
@@ -35,7 +36,19 @@ export default function CaricatureGrid({
       (entries) => {
         const [entry] = entries;
         if (entry?.isIntersecting) {
-          setVisibleCount((prev) => Math.min(prev + CHUNK_SIZE, images.length));
+          setVisibleCount((prev) => {
+            const next = Math.min(prev + CHUNK_SIZE, images.length);
+            if (next > prev) {
+              void trackEvent('grid_load_more', {
+                surface: 'caricature_grid',
+                mode: '2d',
+                previous_visible_count: prev,
+                visible_count: next,
+                total_count: images.length
+              });
+            }
+            return next;
+          });
         }
       },
       {

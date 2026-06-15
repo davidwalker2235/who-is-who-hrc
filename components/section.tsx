@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { HtmlRenderer } from '@/utils/htmlRenderer';
 import {Link} from '@/i18n/navigation';
+import {trackCtaClick} from '@/lib/analytics';
 
 // Hook para detectar si es un dispositivo móvil
 const useIsMobile = () => {
@@ -77,6 +78,11 @@ export default function Section({
       <div className="flex flex-col sm:flex-row gap-4">
         <Link
           href={buttonLink}
+          onClick={() => void trackCtaClick('cta.home.play-2d', {
+            surface: 'home_section',
+            button_text: buttonText,
+            target: buttonLink
+          })}
           className="inline-block bg-[#033778] text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-[#022a5e] transition-colors duration-300"
           style={{ 
             fontFamily: 'var(--font-source-sans-pro), sans-serif',
@@ -89,6 +95,11 @@ export default function Section({
         {!isMobile && (
           <Link
             href="/whoIsWho3D"
+            onClick={() => void trackCtaClick('cta.home.play-3d', {
+              surface: 'home_section',
+              button_text: secondaryButtonText,
+              target: '/whoIsWho3D'
+            })}
             className="inline-block bg-[#033778] text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-[#022a5e] transition-colors duration-300"
             style={{ 
               fontFamily: 'var(--font-source-sans-pro), sans-serif',

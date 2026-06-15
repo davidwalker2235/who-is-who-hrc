@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button, Box, Typography } from '@mui/material';
 import {createQuestionsFromTexts} from '../utils/filterUtils';
 import {useTranslations} from 'next-intl';
+import {trackButtonClick, trackEvent, trackQuestionAnswer} from '@/lib/analytics';
 
 type QuestionSystemProps = {
   onFiltersChange: (answers: boolean[]) => void;
@@ -30,6 +31,13 @@ export default function QuestionSystem({ onFiltersChange }: QuestionSystemProps)
   const [isFinished, setIsFinished] = useState(false);
 
   const handleAnswer = (answer: boolean) => {
+    void trackQuestionAnswer({
+      mode: '3d',
+      question_index: currentQuestionIndex + 1,
+      feature_index: questions[currentQuestionIndex]?.feature,
+      answer: answer ? 'yes' : 'no',
+      answers_count: answers.length + 1
+    });
     // Animación de fade out
     setIsVisible(false);
     
@@ -53,6 +61,10 @@ export default function QuestionSystem({ onFiltersChange }: QuestionSystemProps)
         }, 100);
       } else {
         // Terminaron las preguntas
+        void trackEvent('question_sequence_complete', {
+          mode: '3d',
+          answers_count: newAnswers.length
+        });
         setIsFinished(true);
         setIsVisible(true);
       }
@@ -60,6 +72,16 @@ export default function QuestionSystem({ onFiltersChange }: QuestionSystemProps)
   };
 
   const handleRestart = () => {
+    void trackButtonClick('button.3d.question.restart', {
+      surface: 'question_system',
+      mode: '3d',
+      answers_count: answers.length
+    });
+    void trackEvent('question_sequence_start', {
+      mode: '3d',
+      source: 'restart_button',
+      previous_answers_count: answers.length
+    });
     setCurrentQuestionIndex(0);
     setAnswers([]);
     setIsFinished(false);
@@ -145,7 +167,15 @@ export default function QuestionSystem({ onFiltersChange }: QuestionSystemProps)
           variant="contained"
           color="success"
           size="large"
-          onClick={() => handleAnswer(true)}
+          onClick={() => {
+            void trackButtonClick('button.3d.question.yes', {
+              surface: 'question_system',
+              mode: '3d',
+              question_index: currentQuestionIndex + 1,
+              answer: 'yes'
+            });
+            handleAnswer(true);
+          }}
           sx={{
             minWidth: { xs: '100%', sm: '120px' },
             py: 0.6,
@@ -163,7 +193,15 @@ export default function QuestionSystem({ onFiltersChange }: QuestionSystemProps)
           variant="contained"
           color="error"
           size="large"
-          onClick={() => handleAnswer(false)}
+          onClick={() => {
+            void trackButtonClick('button.3d.question.no', {
+              surface: 'question_system',
+              mode: '3d',
+              question_index: currentQuestionIndex + 1,
+              answer: 'no'
+            });
+            handleAnswer(false);
+          }}
           sx={{
             minWidth: { xs: '100%', sm: '120px' },
             py: 0.6,

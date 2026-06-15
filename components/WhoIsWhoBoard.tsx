@@ -123,7 +123,6 @@ export default function WhoIsWhoBoard({ answers, onCardClick, maxCards }: WhoIsW
 
   // Crear una matriz que ocupe todo el tablero de delante hacia atrás
   const boardLayout = useMemo(() => {
-    debugger;
     const cardsPerRow = 8;
     const totalCards = visibleCards.length;
     const totalRows = Math.ceil(totalCards / cardsPerRow);

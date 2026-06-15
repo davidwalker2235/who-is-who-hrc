@@ -1,4 +1,7 @@
+"use client";
+
 import { useTranslations } from "next-intl";
+import {trackOutboundLink} from "@/lib/analytics";
 
 const ERNI_BOTS_URL = "https://ernibots-v2.azurewebsites.net/";
 const FIRE_OR_FIRED_URL =
@@ -11,6 +14,7 @@ function GameCard({
   description,
   buttonText,
   buttonHref,
+  analyticsId,
 }: {
   imageSrc: string;
   imageAlt: string;
@@ -18,6 +22,7 @@ function GameCard({
   description: string;
   buttonText: string;
   buttonHref: string;
+  analyticsId: string;
 }) {
   return (
     <article className="flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden rounded-lg bg-[#F5F7F8] md:flex-row">
@@ -45,6 +50,11 @@ function GameCard({
             href={buttonHref}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => void trackOutboundLink(analyticsId, buttonHref, {
+              surface: 'video_games_section',
+              button_text: buttonText,
+              game_title: title
+            })}
             className="inline-flex items-center justify-center gap-2 bg-[#033778] text-white px-8 py-3 rounded-full font-semibold text-lg hover:bg-[#022a5e] transition-colors duration-300"
             style={{ fontFamily: "var(--font-source-sans-pro), sans-serif" }}
           >
@@ -86,6 +96,7 @@ export default function VideoGamesSection() {
             description={t("videoGamesEerniDescription")}
             buttonText={t("videoGamesEerniCta")}
             buttonHref={ERNI_BOTS_URL}
+            analyticsId="button.video-games.erni-bots"
           />
           <GameCard
             imageSrc="/fire-or-fired-image.jpeg"
@@ -94,6 +105,7 @@ export default function VideoGamesSection() {
             description={t("videoGamesFireDescription")}
             buttonText={t("videoGamesFireCta")}
             buttonHref={FIRE_OR_FIRED_URL}
+            analyticsId="button.video-games.fire-or-fired"
           />
         </div>
       </div>

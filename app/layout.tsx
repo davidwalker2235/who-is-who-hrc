@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Source_Sans_3 } from "next/font/google";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
-import { Analytics } from '@vercel/analytics/next';
+import FirebaseAnalyticsProvider from '@/components/FirebaseAnalyticsProvider';
 import theme from '../theme';
 import "./globals.css";
 
@@ -44,7 +45,9 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </AppRouterCacheProvider>
-        <Analytics />
+        <Suspense fallback={null}>
+          <FirebaseAnalyticsProvider />
+        </Suspense>
       </body>
     </html>
   );

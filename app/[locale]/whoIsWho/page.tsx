@@ -16,6 +16,7 @@ import Footer from "@/components/Footer";
 import { useCaricatureFilter } from "@/hooks/useCaricatureFilter";
 import { downloadImage, createQuestionsFromTexts, CaricatureImage } from "@/utils/filterUtils";
 import {useTranslations} from 'next-intl';
+import {trackButtonClick, trackEvent} from '@/lib/analytics';
 
 export default function WhoIsWho() {
   const [selectedImage, setSelectedImage] = useState<CaricatureImage | null>(null);
@@ -56,8 +57,28 @@ export default function WhoIsWho() {
     setSelectedImage(null);
   };
 
+  const handleFindCaricatureClick = () => {
+    void trackButtonClick('button.2d.find-caricature', {
+      surface: 'whoiswho_2d',
+      mode: '2d'
+    });
+    void trackEvent('game_start', {
+      mode: '2d',
+      source: 'find_caricature_button'
+    });
+    handleRestartSequence();
+  };
+
+  const handleResetFiltersClick = () => {
+    void trackButtonClick('button.2d.reset-filters', {
+      surface: 'whoiswho_2d',
+      mode: '2d',
+      answers_count: answers.length
+    });
+    handleResetFilters();
+  };
+
   const currentQuestion = questions[currentQuestionIndex];
-debugger;
   return (
     <>
       <Container maxWidth="xl" sx={{ py: 4, pb: '90px' }}>
@@ -73,7 +94,7 @@ debugger;
           </Typography>
           <Button
             variant="contained"
-            onClick={handleRestartSequence}
+            onClick={handleFindCaricatureClick}
             sx={{
               backgroundColor: '#033778',
               color: 'white',
@@ -107,7 +128,7 @@ debugger;
         <Fab
           color="primary"
           aria-label={tWho('resetFiltersAria')}
-          onClick={handleResetFilters}
+          onClick={handleResetFiltersClick}
           sx={{
             position: 'fixed',
             bottom: 24,
@@ -138,6 +159,7 @@ debugger;
         selectedImage={selectedImage}
         onClose={handleCloseModal}
         onDownload={downloadImage}
+        analyticsMode="2d"
       />
 
       <Footer />

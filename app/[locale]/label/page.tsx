@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import {useTranslations} from "next-intl";
+import {trackButtonClick, trackEvent} from "@/lib/analytics";
 
 type LabelsMap = Record<string, number[]>;
 
@@ -55,7 +56,7 @@ export default function LabelCaricaturesPage() {
     }
   }, [t]);
 
-  const saveData = useCallback(async () => {
+  const saveData = useCallback(async (source: "button" | "keyboard" | "unknown" = "unknown") => {
     setIsSaving(true);
     setStatus("");
     setStatusType(null);
@@ -69,9 +70,21 @@ export default function LabelCaricaturesPage() {
       if (!response.ok) throw new Error(t("saveError"));
       setStatus(t("savedOk", {updated: data.updated}));
       setStatusType("success");
+      void trackEvent("label_save_result", {
+        surface: "label_tool",
+        source,
+        result: "success",
+        updated_count: data.updated
+      });
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : t("unknownSaveError"));
+      const message = error instanceof Error ? error.message : t("unknownSaveError");
+      setStatus(message);
       setStatusType("error");
+      void trackEvent("label_save_result", {
+        surface: "label_tool",
+        source,
+        result: "error"
+      });
     } finally {
       setIsSaving(false);
     }
@@ -87,6 +100,21 @@ export default function LabelCaricaturesPage() {
 
       if (event.key >= "1" && event.key <= "7") {
         const featureIndex = Number(event.key) - 1;
+        const checked = currentFeatures[featureIndex] !== 1;
+        void trackButtonClick(`shortcut.label.feature.${featureIndex + 1}`, {
+          surface: "label_tool",
+          source: "keyboard",
+          file_name: currentFile,
+          feature_index: featureIndex + 1,
+          checked
+        });
+        void trackEvent("label_feature_toggle", {
+          surface: "label_tool",
+          source: "keyboard",
+          file_name: currentFile,
+          feature_index: featureIndex + 1,
+          checked
+        });
         setLabels((prev) => {
           const current = prev[currentFile] ?? [...EMPTY_FEATURES];
           const next = [...current];
@@ -96,21 +124,39 @@ export default function LabelCaricaturesPage() {
       }
 
       if (event.key.toLowerCase() === "a") {
+        void trackButtonClick("shortcut.label.previous", {
+          surface: "label_tool",
+          source: "keyboard",
+          file_name: currentFile,
+          current_index: index + 1
+        });
         setIndex((prev) => Math.max(0, prev - 1));
       }
 
       if (event.key.toLowerCase() === "d") {
+        void trackButtonClick("shortcut.label.next", {
+          surface: "label_tool",
+          source: "keyboard",
+          file_name: currentFile,
+          current_index: index + 1
+        });
         setIndex((prev) => Math.min(files.length - 1, prev + 1));
       }
 
       if (event.key.toLowerCase() === "s") {
-        void saveData();
+        void trackButtonClick("shortcut.label.save", {
+          surface: "label_tool",
+          source: "keyboard",
+          file_name: currentFile,
+          current_index: index + 1
+        });
+        void saveData("keyboard");
       }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [currentFile, files.length, saveData]);
+  }, [currentFeatures, currentFile, files.length, index, saveData]);
 
   const setFeatureValue = (featureIndex: number, checked: boolean) => {
     if (!currentFile) return;
@@ -122,11 +168,24 @@ export default function LabelCaricaturesPage() {
     });
   };
 
-  const goToCaricature = () => {
+  const goToCaricature = (source: "button" | "keyboard" = "button") => {
     const target = Number.parseInt(jumpTo.trim(), 10);
+    void trackButtonClick(source === "keyboard" ? "shortcut.label.goto" : "button.label.goto", {
+      surface: "label_tool",
+      source,
+      target_index: Number.isNaN(target) ? undefined : target,
+      current_index: index + 1
+    });
+
     if (Number.isNaN(target) || target <= 0) {
       setStatus(t("invalidTarget"));
       setStatusType("error");
+      void trackEvent("label_action", {
+        surface: "label_tool",
+        action: "goto",
+        source,
+        result: "invalid_target"
+      });
       return;
     }
 
@@ -135,12 +194,27 @@ export default function LabelCaricaturesPage() {
     if (targetIndex === -1) {
       setStatus(t("missingTarget", {file: targetFile}));
       setStatusType("error");
+      void trackEvent("label_action", {
+        surface: "label_tool",
+        action: "goto",
+        source,
+        result: "missing_target",
+        target_file: targetFile
+      });
       return;
     }
 
     setIndex(targetIndex);
     setStatus(t("positioned", {file: targetFile}));
     setStatusType("success");
+    void trackEvent("label_action", {
+      surface: "label_tool",
+      action: "goto",
+      source,
+      result: "success",
+      target_file: targetFile,
+      target_index: targetIndex + 1
+    });
   };
 
   const features = useMemo(
@@ -206,7 +280,25 @@ export default function LabelCaricaturesPage() {
                 control={
                   <Checkbox
                     checked={currentFeatures[feature.index] === 1}
-                    onChange={(event) => setFeatureValue(feature.index, event.target.checked)}
+                    onChange={(event) => {
+                      void trackButtonClick(`checkbox.label.feature.${feature.index + 1}`, {
+                        surface: "label_tool",
+                        source: "checkbox",
+                        file_name: currentFile,
+                        feature_index: feature.index + 1,
+                        feature_label: feature.label,
+                        checked: event.target.checked
+                      });
+                      void trackEvent("label_feature_toggle", {
+                        surface: "label_tool",
+                        source: "checkbox",
+                        file_name: currentFile,
+                        feature_index: feature.index + 1,
+                        feature_label: feature.label,
+                        checked: event.target.checked
+                      });
+                      setFeatureValue(feature.index, event.target.checked);
+                    }}
                   />
                 }
                 label={`${feature.index + 1}. ${feature.label}`}
@@ -227,12 +319,12 @@ export default function LabelCaricaturesPage() {
               onChange={(event) => setJumpTo(event.target.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
-                  goToCaricature();
+                  goToCaricature("keyboard");
                 }
               }}
               sx={{ flex: 1 }}
             />
-            <Button variant="outlined" onClick={goToCaricature}>
+            <Button variant="outlined" onClick={() => goToCaricature("button")}>
               {t("goTo")}
             </Button>
           </Stack>
@@ -240,19 +332,47 @@ export default function LabelCaricaturesPage() {
           <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
             <Button
               variant="outlined"
-              onClick={() => setIndex((prev) => Math.max(0, prev - 1))}
+              onClick={() => {
+                void trackButtonClick("button.label.previous", {
+                  surface: "label_tool",
+                  source: "button",
+                  file_name: currentFile,
+                  current_index: index + 1
+                });
+                setIndex((prev) => Math.max(0, prev - 1));
+              }}
               disabled={index === 0}
             >
               {t("previous")}
             </Button>
             <Button
               variant="outlined"
-              onClick={() => setIndex((prev) => Math.min(files.length - 1, prev + 1))}
+              onClick={() => {
+                void trackButtonClick("button.label.next", {
+                  surface: "label_tool",
+                  source: "button",
+                  file_name: currentFile,
+                  current_index: index + 1
+                });
+                setIndex((prev) => Math.min(files.length - 1, prev + 1));
+              }}
               disabled={index >= files.length - 1}
             >
               {t("next")}
             </Button>
-            <Button variant="contained" onClick={() => void saveData()} disabled={isSaving}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                void trackButtonClick("button.label.save", {
+                  surface: "label_tool",
+                  source: "button",
+                  file_name: currentFile,
+                  current_index: index + 1
+                });
+                void saveData("button");
+              }}
+              disabled={isSaving}
+            >
               {isSaving ? t("saving") : t("save")}
             </Button>
           </Stack>

@@ -1,3 +1,5 @@
+'use client';
+
 import { 
   Modal, 
   Paper, 
@@ -10,6 +12,7 @@ import {
   ArrowBack
 } from '@mui/icons-material';
 import {useTranslations} from 'next-intl';
+import {trackButtonClick} from '@/lib/analytics';
 
 interface Question {
   id: number;
@@ -72,7 +75,14 @@ export default function QuestionModal({
           color: 'white'
         }}>
           <IconButton
-            onClick={onPrevious}
+            onClick={() => {
+              void trackButtonClick('button.2d.question.previous', {
+                surface: 'question_modal',
+                mode: '2d',
+                question_index: currentQuestionIndex + 1
+              });
+              onPrevious();
+            }}
             disabled={currentQuestionIndex === 0}
             sx={{
               visibility: currentQuestionIndex === 0 ? 'hidden' : 'visible',
@@ -98,7 +108,14 @@ export default function QuestionModal({
           </Typography>
           
           <IconButton
-            onClick={onCancel}
+            onClick={() => {
+              void trackButtonClick('button.2d.question.cancel', {
+                surface: 'question_modal',
+                mode: '2d',
+                question_index: currentQuestionIndex + 1
+              });
+              onCancel();
+            }}
             sx={{
               color: 'white',
               '&:hover': {
@@ -141,7 +158,15 @@ export default function QuestionModal({
               variant="contained"
               color="success"
               size="large"
-              onClick={() => onAnswer(true)}
+              onClick={() => {
+                void trackButtonClick('button.2d.question.yes', {
+                  surface: 'question_modal',
+                  mode: '2d',
+                  question_index: currentQuestionIndex + 1,
+                  answer: 'yes'
+                });
+                onAnswer(true);
+              }}
               sx={{
                 minWidth: { xs: '100%', sm: '120px' },
                 py: 0.6, // Reducido para que el botón sea más fino
@@ -159,7 +184,15 @@ export default function QuestionModal({
               variant="contained"
               color="error"
               size="large"
-              onClick={() => onAnswer(false)}
+              onClick={() => {
+                void trackButtonClick('button.2d.question.no', {
+                  surface: 'question_modal',
+                  mode: '2d',
+                  question_index: currentQuestionIndex + 1,
+                  answer: 'no'
+                });
+                onAnswer(false);
+              }}
               sx={{
                 minWidth: { xs: '100%', sm: '120px' },
                 py: 0.6, // Reducido para que el botón sea más fino

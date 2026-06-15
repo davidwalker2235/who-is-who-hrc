@@ -1,6 +1,7 @@
 'use client';
 
 import { CaricatureFeatures } from '../data/imagesData';
+import {trackButtonClick, trackEvent} from '@/lib/analytics';
 
 interface FilterButtonsProps {
   activeFilters: CaricatureFeatures[];
@@ -26,7 +27,20 @@ export default function FilterButtons({ activeFilters, onFilterToggle }: FilterB
         return (
           <button
             key={filter}
-            onClick={() => onFilterToggle(filter)}
+            onClick={() => {
+              void trackButtonClick(`button.filter.${label.toLowerCase().replace(/\s+/g, '-')}`, {
+                surface: 'filter_buttons',
+                filter_name: label,
+                filter_value: filter,
+                next_state: isActive ? 'inactive' : 'active'
+              });
+              void trackEvent('filter_toggle', {
+                filter_name: label,
+                filter_value: filter,
+                next_state: isActive ? 'inactive' : 'active'
+              });
+              onFilterToggle(filter);
+            }}
             className={`
               px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300
               transform hover:scale-105 active:scale-95
