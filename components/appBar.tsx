@@ -13,8 +13,8 @@ export default function AppBarComponent() {
   const t = useTranslations('header');
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar sx={{ position: "static", minHeight: '5.5em', maxWidth: '100%', backgroundColor: 'white', boxShadow: 'none' }}>
+    <Box sx={{ flexGrow: 1, position: 'relative', zIndex: (theme) => theme.zIndex.appBar }}>
+      <AppBar sx={{ position: 'relative', zIndex: (theme) => theme.zIndex.appBar, minHeight: '5.5em', maxWidth: '100%', backgroundColor: 'white', boxShadow: 'none' }}>
         <Container
           maxWidth={false}
           disableGutters

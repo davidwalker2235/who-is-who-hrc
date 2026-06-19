@@ -36,7 +36,7 @@ export default function VideoBanner({titleLine1, titleLine2}: VideoBannerProps) 
       void trackEvent('video_start', {
         surface: 'home_video_banner',
         video_title: 'ERNI video banner',
-        video_url: '/ERNI_video.mp4',
+        video_url: '/erni_intro.mp4',
         video_provider: 'local',
         visible: true
       });
@@ -52,7 +52,7 @@ export default function VideoBanner({titleLine1, titleLine2}: VideoBannerProps) 
           void trackEvent('video_progress', {
             surface: 'home_video_banner',
             video_title: 'ERNI video banner',
-            video_url: '/ERNI_video.mp4',
+            video_url: '/erni_intro.mp4',
             video_provider: 'local',
             video_percent: threshold,
             video_current_time: Math.round(video.currentTime),
@@ -67,7 +67,7 @@ export default function VideoBanner({titleLine1, titleLine2}: VideoBannerProps) 
       void trackEvent('video_complete', {
         surface: 'home_video_banner',
         video_title: 'ERNI video banner',
-        video_url: '/ERNI_video.mp4',
+        video_url: '/erni_intro.mp4',
         video_provider: 'local',
         visible: true
       });
@@ -91,7 +91,7 @@ export default function VideoBanner({titleLine1, titleLine2}: VideoBannerProps) 
       <video
         ref={videoRef}
         className="w-full h-full absolute top-0 left-0 object-cover"
-        src="/ERNI_video.mp4"
+        src="/erni_intro.mp4"
         autoPlay
         muted
         loop
